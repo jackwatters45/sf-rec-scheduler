@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Read the first line containing the refs
+read -r local_ref local_sha remote_ref remote_sha
+
+# Read push options from stdin
+SYNC=false
+while read -r line; do
+  if [ "$line" = "sync" ]; then
+    SYNC=true
+    break
+  fi
+done
+
+# Check if we're pushing to main/master
+branch=$(git rev-parse --abbrev-ref HEAD)
+if [[ "$branch" != "main" && "$branch" != "master" ]]; then
+  exit 0
+fi
+
+if [ "$SYNC" = false ]; then
+  echo "Skipping secret sync (use 'git push -o sync' to sync secrets)"
+  exit 0
+fi
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get the project root directory (parent of .githooks)
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
+# Run the sync script
+"$PROJECT_ROOT/scripts/sync_secrets.sh"

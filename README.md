@@ -107,12 +107,12 @@ fly deploy
 
 ### Managing Secrets
 
-The bot uses a git pre-push hook to automatically sync your local `.env` file with Fly.io secrets when pushing to main/master. You have two options for managing secrets:
+The bot provides two ways to manage your Fly.io secrets:
 
-1. **Using the Pre-push Hook** (Recommended):
-   - Your secrets will automatically sync when pushing to main/master
-   - You'll be shown what secrets will be synced and asked for confirmation
-   - Use `git push --dry-run` to preview what would be synced without making changes
+1. **Using the Sync Script**:
+   - Run manually: `./scripts/sync_secrets.sh`
+   - During git push: `git push -o sync` (when pushing to main/master)
+   - By default, `git push` will not sync secrets
 
 2. **Using Fly.io Dashboard**:
    - Go to https://fly.io/apps/sf-rec/secrets
@@ -139,3 +139,4 @@ When deployed to Fly.io, logs are available through the Fly.io dashboard or CLI.
 - Payment information should be saved in your account
 - The bot runs in headless mode by default (configurable via HEADLESS environment variable)
 - The scheduler runs independently of the reservation time (e.g., you can schedule the bot to run on Monday mornings to book Wednesday evening slots)
+
