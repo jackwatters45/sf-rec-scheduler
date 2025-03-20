@@ -1,25 +1,14 @@
 #!/bin/bash
 
-# Read the first line containing the refs
-read -r local_ref local_sha remote_ref remote_sha
-
-# Read push options from stdin
-SYNC=false
-while read -r line; do
-  if [ "$line" = "sync" ]; then
-    SYNC=true
-    break
-  fi
-done
-
 # Check if we're pushing to main/master
 branch=$(git rev-parse --abbrev-ref HEAD)
 if [[ "$branch" != "main" && "$branch" != "master" ]]; then
   exit 0
 fi
 
-if [ "$SYNC" = false ]; then
-  echo "Skipping secret sync (use 'git push -o sync' to sync secrets)"
+# Check for SYNC_SECRETS environment variable
+if [ "$SYNC_SECRETS" != "true" ]; then
+  echo "Skipping secret sync (use 'SYNC_SECRETS=true git push' to sync secrets)"
   exit 0
 fi
 
