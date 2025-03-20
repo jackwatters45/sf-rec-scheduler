@@ -44,7 +44,7 @@ FACILITY_GROUP_ID=28
 # Activity Settings
 SPORT="Soccer"
 RESERVATION_NAME="Local Sports Club Practice"
-QUANTITY=20
+GROUP_QUANTITY=20
 
 # Reservation Settings
 DESIRED_WEEKDAY="WEDNESDAY"
@@ -87,7 +87,7 @@ fly secrets set FACILITY_GROUP_ID=28
 # Activity Settings
 fly secrets set SPORT=Soccer
 fly secrets set RESERVATION_NAME="Local Sports Club Practice"
-fly secrets set QUANTITY=20
+fly secrets set GROUP_QUANTITY=20
 
 # Scheduling Settings
 fly secrets set SCHEDULE_WEEKDAY=MONDAY

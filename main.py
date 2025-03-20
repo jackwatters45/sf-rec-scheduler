@@ -2,13 +2,12 @@ from playwright.sync_api import sync_playwright, Page
 from src._utils.env import load_credentials
 import requests
 import re
-from src._utils.utils import (
-    adjust_quantity,
-    get_customer_id,
+from src._utils.utils import get_customer_id
+from src._utils.date_utils import (
+    calculate_request_date,
     military_to_american,
     format_date_for_calendar,
 )
-from src._utils.date_utils import calculate_request_date
 from src._utils.logger import setup_logger
 from src._utils.field_utils import find_available_fields, FieldInfo, TimeSlotDetail
 import src._utils.config as config
@@ -33,7 +32,7 @@ def main():
         reservation_form(page, customer_id)
         details_and_policy_questions(page)
         confirm_booking(page)
-        # checkout_form(page)
+        checkout_form(page)
 
         context.close()
         browser.close()
@@ -143,7 +142,13 @@ def reservation_form(page: Page, customer_id: int):
     desired_field.click()
 
     # adjust quantity
-    adjust_quantity(page, timeslot_selector, config.QUANTITY)
+    field_cell = page.get_by_label(timeslot_selector)
+    table_header = field_cell.locator("..").locator("..")
+
+    quantity_stepper = table_header.locator("input")
+    quantity_stepper.fill(str(config.GROUP_QUANTITY))
+
+    page.wait_for_timeout(1000)
 
     confirm_button = page.locator(".booking-detail__btn--continue")
     confirm_button.click()

@@ -52,7 +52,7 @@ def validate_weekday_and_frequency(
 def get_desired_date_time() -> DesiredDateTime:
     """Get reservation date/time settings from environment variables."""
     weekday = os.getenv("DESIRED_WEEKDAY", "WEDNESDAY")
-    time = os.getenv("DESIRED_TIME", "20:00")
+    time = os.getenv("DESIRED_TIME_MILITARY", "20:00:00")
     frequency = os.getenv("RESERVATION_FREQUENCY", "WEEKLY")
 
     # Validate the values
@@ -103,7 +103,7 @@ FACILITY_GROUP_ID = int(os.getenv("FACILITY_GROUP_ID", "28"))
 # Activity Settings
 SPORT = os.getenv("SPORT", "Soccer")
 RESERVATION_NAME = os.getenv("RESERVATION_NAME", "Local Sports Club Practice")
-QUANTITY = int(os.getenv("QUANTITY", "20"))
+GROUP_QUANTITY = int(os.getenv("GROUP_QUANTITY", "20"))
 
 # Deployment Settings
 HEADLESS = os.getenv("HEADLESS", "true").lower() == "true"

@@ -68,3 +68,22 @@ def calculate_request_date() -> str:
     weekday = config.DESIRED_DATE_TIME["weekday"]
     time = config.DESIRED_DATE_TIME["time"]
     return get_next_occurrence(weekday, time)
+
+
+# Formatting
+def military_to_american(military_time: str) -> str:
+    """Convert military time (HH:MM:SS) to American time (H:MM AM/PM)"""
+    time_obj = datetime.strptime(military_time, "%H:%M:%S")
+    return time_obj.strftime("%-I:%M %p")
+
+
+def american_to_military(american_time: str) -> str:
+    """Convert American time (H:MM AM/PM) to military time (HH:MM:SS)"""
+    time_obj = datetime.strptime(american_time, "%I:%M %p")
+    return time_obj.strftime("%H:%M:%S")
+
+
+def format_date_for_calendar(date_str: str) -> str:
+    """Convert date from YYYY-MM-DD to MMM DD, YYYY format"""
+    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+    return date_obj.strftime("%b %d, %Y")
