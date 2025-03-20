@@ -21,17 +21,14 @@ This bot automates the process of reserving fields at SF Rec facilities.
 pip install -r requirements.txt
 ```
 
-2. Set up your environment variables. You can do this in two ways:
+2. Set up your environment variables:
 
-### Option 1: Using a .env file (recommended for local development)
-
-Create a `.env` file in the project root:
+Create a `.env` file in the project root. Copy over the `.env.example` and edit to your preference:
 
 ```bash
 # Credentials
 SF_REC_EMAIL=your_email@example.com
 SF_REC_PASSWORD=your_password
-
 
 # Time Preferences
 DESIRED_TIME_MILITARY="20:00:00"
@@ -62,44 +59,6 @@ MAX_RETRIES=3
 RETRY_DELAY=5
 ```
 
-### Option 2: Setting environment variables directly (recommended for deployment)
-
-When deploying to Fly.io, you can set these variables using the Fly CLI:
-
-```bash
-# Credentials
-fly secrets set EMAIL=your_email@example.com
-fly secrets set PASSWORD=your_password
-
-# Reservation Settings
-fly secrets set DESIRED_WEEKDAY=WEDNESDAY
-fly secrets set DESIRED_TIME=20:00
-fly secrets set RESERVATION_FREQUENCY=WEEKLY
-
-# Time Preferences
-fly secrets set DESIRED_TIME_MILITARY=20:00:00
-fly secrets set ALT_DESIRED_TIMES_MILITARY=19:00:00,21:00:00
-
-# Field Preferences
-fly secrets set DESIRED_FIELD_STARTS_WITH="FIELD - Main"
-fly secrets set FACILITY_GROUP_ID=28
-
-# Activity Settings
-fly secrets set SPORT=Soccer
-fly secrets set RESERVATION_NAME="Local Sports Club Practice"
-fly secrets set GROUP_QUANTITY=20
-
-# Scheduling Settings
-fly secrets set SCHEDULE_WEEKDAY=MONDAY
-fly secrets set SCHEDULE_TIME=09:00
-fly secrets set SCHEDULE_FREQUENCY=WEEKLY
-
-# Deployment Settings
-fly secrets set HEADLESS=true
-fly secrets set MAX_RETRIES=3
-fly secrets set RETRY_DELAY=5
-```
-
 ## Running the Bot
 
 ### One-time Run
@@ -127,36 +86,42 @@ The scheduler will run the bot according to the configured schedule (default: ev
 
 ## Deployment
 
-This bot is configured to run on Fly.io, which provides a reliable platform for running scheduled tasks.
-
-### Prerequisites
+This bot is configured to run on Fly.io. To deploy:
 
 1. Install the [Fly CLI](https://fly.io/docs/hands-on/install-flyctl/)
-2. Sign up for a [Fly.io account](https://fly.io/docs/hands-on/sign-up-for-fly/)
-3. Login to Fly.io:
 
+2. Login to Fly.io:
 ```bash
 fly auth login
 ```
 
-### Deployment Steps
-
-1. Create a new Fly.io app:
-
+3. Create a new Fly.io app (first time only):
 ```bash
 fly apps create sf-rec
 ```
 
-2. Set up your environment variables using the commands in Option 2 above.
-
-3. Deploy the application:
-
+4. Deploy the application:
 ```bash
 fly deploy
 ```
 
-4. Monitor the logs:
+### Managing Secrets
 
+The bot uses a git pre-push hook to automatically sync your local `.env` file with Fly.io secrets when pushing to main/master. You have two options for managing secrets:
+
+1. **Using the Pre-push Hook** (Recommended):
+   - Your secrets will automatically sync when pushing to main/master
+   - You'll be shown what secrets will be synced and asked for confirmation
+   - Use `git push --dry-run` to preview what would be synced without making changes
+
+2. **Using Fly.io Dashboard**:
+   - Go to https://fly.io/apps/sf-rec/secrets
+   - Manually manage your secrets through the web interface
+   - Use the same variable names as shown in the `.env.example` file
+
+## Monitoring
+
+Monitor your deployment using:
 ```bash
 fly logs
 ```
