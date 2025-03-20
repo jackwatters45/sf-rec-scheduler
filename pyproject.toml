@@ -1,0 +1,14 @@
+[project]
+dependencies = [
+  "bs4>=0.0.2",
+  "playwright>=1.51.0",
+  "pydantic>=2.10.6",
+  "python-dotenv>=1.0.0",
+  "requests>=2.32.3",
+  "ruff>=0.11.0",
+]
+description = "Add your description here"
+name = "sf-rec"
+readme = "README.md"
+requires-python = ">=3.13"
+version = "0.1.0"

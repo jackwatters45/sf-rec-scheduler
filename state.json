@@ -1,0 +1,41 @@
+[
+	{ "ownerID": {}, "keyHash": -817266272, "entry": ["middlename", ""] },
+	{ "ownerID": {}, "keyHash": -384904671, "entry": ["lastname", "Watters"] },
+	{ "ownerID": {}, "keyHash": 624471428, "entry": ["additional_email", ""] },
+	{
+		"ownerID": {},
+		"bitmap": 1280,
+		"nodes": [
+			{
+				"ownerID": {},
+				"keyHash": 178460935,
+				"entry": ["jsessionid", "node03irztsjhp07np08a6cjf1xu12426907.node0"]
+			},
+			{
+				"ownerID": {},
+				"keyHash": -454823609,
+				"entry": ["encodedCustomerId", "F1810C8F0F35AEF1"]
+			}
+		]
+	},
+	{ "ownerID": {}, "keyHash": 371537774, "entry": ["guardian_email", null] },
+	{
+		"ownerID": {},
+		"bitmap": 3072,
+		"nodes": [
+			{
+				"ownerID": {},
+				"keyHash": 886327636,
+				"entry": ["onlineadmininstructorid", 0]
+			},
+			{ "ownerID": {}, "keyHash": -644772492, "entry": ["loginname", null] }
+		]
+	},
+	{ "ownerID": {}, "keyHash": -507441799, "entry": ["customerid", 311429] },
+	{ "ownerID": {}, "keyHash": 133788987, "entry": ["firstname", "John"] },
+	{
+		"ownerID": {},
+		"keyHash": 96619420,
+		"entry": ["email", "jack.watters@me.com"]
+	}
+]
