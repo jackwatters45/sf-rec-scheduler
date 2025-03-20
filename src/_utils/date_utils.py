@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Literal
+import src._utils.config as config
+
 
 Weekday = Literal[
     "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"
@@ -56,16 +58,13 @@ def get_next_occurrence(weekday: Weekday, time: str) -> str:
     return target_date.strftime("%Y-%m-%d")
 
 
-def calculate_request_date(weekday: Weekday, time: str) -> str:
+def calculate_request_date() -> str:
     """
-    Calculate the next occurrence of a given weekday and time.
-    This is a wrapper function that maintains compatibility with the existing code.
-
-    Args:
-        weekday (Weekday): The desired day of the week (e.g., "WEDNESDAY")
-        time (str): The desired time in 24-hour format (e.g., "20:00")
+    Calculate the next occurrence of the desired date and time.
 
     Returns:
         str: The date of the next occurrence in YYYY-MM-DD format
     """
+    weekday = config.DESIRED_DATE_TIME["weekday"]
+    time = config.DESIRED_DATE_TIME["time"]
     return get_next_occurrence(weekday, time)

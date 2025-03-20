@@ -1,4 +1,3 @@
-from typing import TypedDict
 from playwright.sync_api import sync_playwright, Page
 from src._utils.env import load_credentials
 import requests
@@ -9,46 +8,12 @@ from src._utils.utils import (
     military_to_american,
     format_date_for_calendar,
 )
-from src._utils.date_utils import calculate_request_date as get_next_date, Weekday
+from src._utils.date_utils import calculate_request_date
 from src._utils.logger import setup_logger
 from src._utils.field_utils import find_available_fields, FieldInfo, TimeSlotDetail
+import src._utils.config as config
 
 logger = setup_logger()
-
-# TODO: attach to ui
-DESIRED_TIME_MILITARY = "20:00:00"
-ALT_DESIRED_TIMES_MILITARY = ["19:00:00", "21:00:00"]
-
-DESIRED_FIELD_STARTS_WITH = "BEACH - Pitch"
-FACILITY_GROUP_ID = 28
-SPORT = "Lacrosse"
-RESERVATION_NAME = "Barabary Coast Men's Lacrosse Club Practice"
-QUANTITY = 20
-
-
-class DesiredDateTime(TypedDict):
-    weekday: Weekday
-    time: str
-    frequency: str
-
-
-DESIRED_DATE_TIME: DesiredDateTime = {
-    "weekday": "WEDNESDAY",
-    "time": "20:00",
-    "frequency": "WEEKLY",
-}
-
-
-def calculate_request_date() -> str:
-    """
-    Calculate the next occurrence of the desired date and time.
-
-    Returns:
-        str: The date of the next occurrence in YYYY-MM-DD format
-    """
-    weekday = DESIRED_DATE_TIME["weekday"]
-    time = DESIRED_DATE_TIME["time"]
-    return get_next_date(weekday, time)
 
 
 credentials = load_credentials()
@@ -59,9 +24,8 @@ def main():
     Main function to automate the SF Rec field reservation process.
     Handles login, field selection, form filling, and checkout.
     """
-
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(headless=config.HEADLESS)
         context = browser.new_context()
         page = context.new_page()
 
@@ -119,7 +83,7 @@ def reservation_form(page: Page, customer_id: int):
         customer_id (int): The customer's ID for the API request
     """
     page.goto(
-        f"https://anc.apm.activecommunities.com/sfrecpark/reservation/landing/quick?groupId={FACILITY_GROUP_ID}",
+        f"https://anc.apm.activecommunities.com/sfrecpark/reservation/landing/quick?groupId={config.FACILITY_GROUP_ID}",
     )
 
     request_date = calculate_request_date()
@@ -135,7 +99,7 @@ def reservation_form(page: Page, customer_id: int):
 
     # reservation name
     name_input = page.locator("div.event-input .input-group__field")
-    name_input.fill(RESERVATION_NAME)
+    name_input.fill(config.RESERVATION_NAME)
 
     # get availability
     response = get_availability_details(page, request_date, customer_id)
@@ -159,14 +123,14 @@ def reservation_form(page: Page, customer_id: int):
     # Find available fields
     available_field, selected_time = find_available_fields(
         fields=fields,
-        primary_time=DESIRED_TIME_MILITARY,
-        alternate_times=ALT_DESIRED_TIMES_MILITARY,
-        field_prefix=DESIRED_FIELD_STARTS_WITH,
+        primary_time=config.DESIRED_TIME_MILITARY,
+        alternate_times=config.ALT_DESIRED_TIMES_MILITARY,
+        field_prefix=config.DESIRED_FIELD_STARTS_WITH,
     )
 
     if not available_field:
         logger.error(
-            f"No fields available at {DESIRED_TIME_MILITARY} or any alternate times: {', '.join(ALT_DESIRED_TIMES_MILITARY)}"
+            f"No fields available at {config.DESIRED_TIME_MILITARY} or any alternate times: {', '.join(config.ALT_DESIRED_TIMES_MILITARY)}"
         )
         exit()
 
@@ -179,7 +143,7 @@ def reservation_form(page: Page, customer_id: int):
     desired_field.click()
 
     # adjust quantity
-    adjust_quantity(page, timeslot_selector, QUANTITY)
+    adjust_quantity(page, timeslot_selector, config.QUANTITY)
 
     confirm_button = page.locator(".booking-detail__btn--continue")
     confirm_button.click()
@@ -210,7 +174,7 @@ def get_availability_details(page: Page, request_date: str, customer_id: int):
         response = requests.post(
             url="https://anc.apm.activecommunities.com/sfrecpark/rest/reservation/quickreservation/availability?locale=en-US",
             json={
-                "facility_group_id": FACILITY_GROUP_ID,
+                "facility_group_id": config.FACILITY_GROUP_ID,
                 "customer_id": customer_id,
                 "company_id": 0,
                 "reserve_date": request_date,
@@ -255,7 +219,7 @@ def details_and_policy_questions(page: Page):
         "#main-content-body > div > div.an-module-container > div > div > div.modal-wrap > div.modal.is-open.quick-need-to-answer > section > div.modal-body > div.enroll-question > div.an-survey > fieldset > div > div:nth-child(1) > fieldset > div > div.afx-col.question-answer-container.enroll-question-answer > div > div > div.dropdown__button.input__field"
     )
     activity_dropdown.click()
-    activity_option = page.locator(f"li[title='{SPORT}']")
+    activity_option = page.locator(f"li[title='{config.SPORT}']")
     activity_option.scroll_into_view_if_needed()
     activity_option.click()
 
@@ -321,7 +285,7 @@ def checkout_form(page: Page):
     # cvv
     cvv = iframe.locator(".form-control")
     cvv.wait_for(state="visible")
-    cvv.fill("123")
+    cvv.fill(config.CVV)
 
     # submit button
     pay_button = page.locator(".pay__button")
