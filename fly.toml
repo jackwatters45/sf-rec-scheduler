@@ -1,5 +1,5 @@
-app = "sf-rec" 
-primary_region = "sjc" # San Jose, CA
+app = "sf-rec"
+primary_region = "sjc"
 
 [build]
 dockerfile = "Dockerfile"
@@ -17,3 +17,11 @@ app = "python -m scheduler"
 cpu_kind = "shared"
 cpus = 1
 memory_mb = 1024
+
+[experimental]
+allowed_public_ports = []
+auto_rollback = true
+
+[metrics]
+path = "/metrics"
+port = 9091

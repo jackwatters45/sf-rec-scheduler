@@ -21,7 +21,8 @@ def run_scheduler() -> None:
     """Set up and run the scheduler."""
     # Schedule the job
     if SCHEDULE_FREQUENCY == "WEEKLY":
-        schedule.every().week.at(SCHEDULE_TIME).do(job)  # type: ignore
+        weekday_method = getattr(schedule.every(), SCHEDULE_WEEKDAY.lower())
+        weekday_method.at(SCHEDULE_TIME).do(job)  # type: ignore
         logger.info(f"Scheduled job to run every {SCHEDULE_WEEKDAY} at {SCHEDULE_TIME}")
     else:  # DAILY
         schedule.every().day.at(SCHEDULE_TIME).do(job)  # type: ignore

@@ -4,13 +4,13 @@ This bot automates the process of reserving fields at SF Rec facilities.
 
 ## TODO
 
-- cron job
-- ui
+- Cron job
+- UI
 
-## prereqs
+## Prereqs
 
-- create account
-- add payment
+- Create account
+- Add payment
 
 ## Setup
 

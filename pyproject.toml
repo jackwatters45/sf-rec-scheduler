@@ -11,5 +11,5 @@ dependencies = [
 description = "Add your description here"
 name = "sf-rec"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 version = "0.1.0"
