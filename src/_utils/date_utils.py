@@ -1,21 +1,6 @@
 from datetime import datetime, timedelta
-from typing import Literal
+from src._utils.constants import Weekday, WEEKDAY_MAP
 import src._utils.config as config
-
-
-Weekday = Literal[
-    "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"
-]
-
-WEEKDAY_MAP = {
-    "MONDAY": 0,
-    "TUESDAY": 1,
-    "WEDNESDAY": 2,
-    "THURSDAY": 3,
-    "FRIDAY": 4,
-    "SATURDAY": 5,
-    "SUNDAY": 6,
-}
 
 
 def get_next_occurrence(weekday: Weekday, time: str) -> str:
@@ -33,7 +18,7 @@ def get_next_occurrence(weekday: Weekday, time: str) -> str:
     current_date = datetime.now()
 
     # Parse the target time
-    target_hour, target_minute = map(int, time.split(":"))
+    target_hour, target_minute, _ = map(int, time.split(":"))
 
     # Get the target weekday number (0-6)
     target_weekday = WEEKDAY_MAP[weekday]

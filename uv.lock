@@ -404,7 +404,7 @@ wheels = [
 ]
 
 [[package]]
-name = "sf-rec"
+name = "sf-rec-bot"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

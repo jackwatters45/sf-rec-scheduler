@@ -1,5 +1,5 @@
 from typing import TypedDict, Literal
-from src._utils.date_utils import Weekday
+from src._utils.constants import Weekday
 import os
 from dotenv import load_dotenv
 

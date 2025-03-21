@@ -29,6 +29,8 @@ def main():
         page = context.new_page()
 
         customer_id = login(page)
+
+        # TODO: add retry logic here
         reservation_form(page, customer_id)
         details_and_policy_questions(page)
         confirm_booking(page)
@@ -138,15 +140,14 @@ def reservation_form(page: Page, customer_id: int):
     start_time = military_to_american(selected_time)
     timeslot_selector = re.compile(f"^{aria_label} {start_time}")
 
-    desired_field = page.get_by_label(timeslot_selector)
-    desired_field.click()
-
-    # adjust quantity
     field_cell = page.get_by_label(timeslot_selector)
+
     table_header = field_cell.locator("..").locator("..")
 
     quantity_stepper = table_header.locator("input")
     quantity_stepper.fill(str(config.GROUP_QUANTITY))
+
+    field_cell.click()
 
     page.wait_for_timeout(1000)
 
