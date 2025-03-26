@@ -93,8 +93,27 @@ def reservation_form(page: Page, customer_id: int):
     calendar_button = page.locator(".filter-section__date-time input")
     calendar_button.click()
     calendar = page.locator(".an-calendar")
-    desired_date = calendar.get_by_label(format_date_for_calendar(request_date))
-    desired_date.click()
+
+    # Try to find the date in the current month view
+    formatted_date = format_date_for_calendar(request_date)
+    max_attempts = 3  # Maximum number of months to look ahead
+    attempt = 0
+
+    while attempt < max_attempts:
+        desired_date = calendar.get_by_label(formatted_date)
+        if desired_date.is_visible():
+            desired_date.click()
+            break
+
+        next_button = calendar.get_by_role("button", name="Next")
+        next_button.click()
+        page.wait_for_timeout(500)  # Wait for calendar to update
+        attempt += 1
+
+    if attempt >= max_attempts:
+        raise ValueError(
+            f"Could not find date {request_date} in calendar after {max_attempts} attempts"
+        )
 
     page.wait_for_timeout(3000)
 

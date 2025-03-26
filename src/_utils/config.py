@@ -11,6 +11,7 @@ class DesiredDateTime(TypedDict):
     weekday: Weekday
     time: str
     frequency: Literal["WEEKLY", "DAILY"]
+    occurrences_ahead: int
 
 
 def validate_weekday_and_frequency(
@@ -54,6 +55,9 @@ def get_desired_date_time() -> DesiredDateTime:
     weekday = os.getenv("DESIRED_WEEKDAY", "WEDNESDAY")
     time = os.getenv("DESIRED_TIME_MILITARY", "20:00:00")
     frequency = os.getenv("RESERVATION_FREQUENCY", "WEEKLY")
+    occurrences_ahead = int(
+        os.getenv("OCCURRENCES_AHEAD", "2")
+    )  # Default to 2 weeks ahead
 
     # Validate the values
     weekday, frequency = validate_weekday_and_frequency(
@@ -67,6 +71,7 @@ def get_desired_date_time() -> DesiredDateTime:
         "weekday": weekday,  # type: ignore
         "time": time,
         "frequency": frequency,  # type: ignore
+        "occurrences_ahead": occurrences_ahead,
     }
 
 

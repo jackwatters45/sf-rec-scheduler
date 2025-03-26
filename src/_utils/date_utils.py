@@ -5,7 +5,7 @@ import src._utils.config as config
 
 def get_next_occurrence(weekday: Weekday, time: str) -> str:
     """
-    Calculate the next occurrence of a given weekday and time.
+    Calculate the next occurrence of a given weekday and time, based on the configured number of occurrences ahead.
 
     Args:
         weekday (Weekday): The desired day of the week (e.g., "WEDNESDAY")
@@ -27,6 +27,10 @@ def get_next_occurrence(weekday: Weekday, time: str) -> str:
     days_ahead = target_weekday - current_date.weekday()
     if days_ahead <= 0:  # If the target day has passed this week
         days_ahead += 7  # Move to next week
+
+    # Add extra weeks based on occurrences_ahead configuration
+    # Subtract 1 because we already added one week in the previous step
+    days_ahead += 7 * (config.DESIRED_DATE_TIME["occurrences_ahead"] - 1)
 
     # Calculate the target date
     target_date = current_date + timedelta(days=days_ahead)
@@ -69,6 +73,6 @@ def american_to_military(american_time: str) -> str:
 
 
 def format_date_for_calendar(date_str: str) -> str:
-    """Convert date from YYYY-MM-DD to MMM DD, YYYY format"""
+    """Convert date from YYYY-MM-DD to MMM DD, YYYY format without leading zeros"""
     date_obj = datetime.strptime(date_str, "%Y-%m-%d")
-    return date_obj.strftime("%b %d, %Y")
+    return date_obj.strftime("%b %-d, %Y")
