@@ -41,4 +41,4 @@ ENV PYTHONUNBUFFERED=1
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 
 # Run the application
-CMD ["python", "-m", "scheduler"] 
+CMD ["uv", "run", "-m", "scheduler"] 
