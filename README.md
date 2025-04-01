@@ -2,6 +2,8 @@
 
 This bot automates the process of reserving fields at SF Rec facilities.
 
+<https://anc.apm.activecommunities.com/sfrecpark/reservation/landing>
+
 ## TODO
 
 - API
@@ -11,13 +13,17 @@ This bot automates the process of reserving fields at SF Rec facilities.
 
 - Create account
 - Add payment
+- Install uv (recommended package manager):
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
 
 ## Setup
 
 1. Install dependencies:
 
 ```bash
-pip install -r requirements.txt
+uv sync
 ```
 
 2. Set up your environment variables:
@@ -31,7 +37,7 @@ SF_REC_PASSWORD=your_password
 
 # Time Preferences
 DESIRED_TIME_MILITARY="20:00:00"
-ALT_DESIRED_TIMES_MILITARY="19:00:00,21:00:00"
+ALT_DESIRED_TIMES_MILITARY='["19:00:00"]'
 
 # Field Preferences
 DESIRED_FIELD_STARTS_WITH="FIELD - Main" 
@@ -65,7 +71,7 @@ RETRY_DELAY=5
 To run the bot once:
 
 ```bash
-python -m main
+uv run -m main
 ```
 
 ### Scheduled Run
@@ -73,7 +79,7 @@ python -m main
 To run the bot on a schedule:
 
 ```bash
-python -m scheduler
+uv run -m scheduler
 ```
 
 The scheduler will run the bot according to the configured schedule (default: every Monday at 9:00 AM). It will:
@@ -110,7 +116,7 @@ The bot provides two ways to manage your Fly.io secrets:
 
 1. **Using the Sync Script**:
    - Run manually: `./scripts/sync_secrets.sh`
-   - During git push: `git push -o sync` (when pushing to main/master)
+   - During git push: `SYNC_SECRETS=true git push` (when pushing to main/master)
    - By default, `git push` will not sync secrets
 
 2. **Using Fly.io Dashboard**:
