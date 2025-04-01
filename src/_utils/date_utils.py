@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
-from src._utils.constants import Weekday, WEEKDAY_MAP
-import src._utils.config as config
+from src._utils.env import Weekday, settings, WEEKDAY_MAP
 
 
 def get_next_occurrence(weekday: Weekday, time: str) -> str:
@@ -30,7 +29,7 @@ def get_next_occurrence(weekday: Weekday, time: str) -> str:
 
     # Add extra weeks based on occurrences_ahead configuration
     # Subtract 1 because we already added one week in the previous step
-    days_ahead += 7 * (config.DESIRED_DATE_TIME["occurrences_ahead"] - 1)
+    days_ahead += 7 * (settings.occurrences_ahead - 1)
 
     # Calculate the target date
     target_date = current_date + timedelta(days=days_ahead)
@@ -54,9 +53,7 @@ def calculate_request_date() -> str:
     Returns:
         str: The date of the next occurrence in YYYY-MM-DD format
     """
-    weekday = config.DESIRED_DATE_TIME["weekday"]
-    time = config.DESIRED_DATE_TIME["time"]
-    return get_next_occurrence(weekday, time)
+    return get_next_occurrence(settings.desired_weekday, settings.desired_time_military)
 
 
 # Formatting

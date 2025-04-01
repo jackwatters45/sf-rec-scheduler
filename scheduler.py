@@ -1,7 +1,8 @@
 import schedule
 import time
 from src._utils.logger import setup_logger
-from src._utils.config import SCHEDULE_WEEKDAY, SCHEDULE_TIME, SCHEDULE_FREQUENCY
+from src._utils.env import settings
+from src._utils.test_utils import test_scheduler
 from main import main
 
 logger = setup_logger()
@@ -19,14 +20,23 @@ def job() -> None:
 
 def run_scheduler() -> None:
     """Set up and run the scheduler."""
+    # Parse the schedule time
+    schedule_hour, schedule_minute = map(int, settings.schedule_time.split(":"))
+
     # Schedule the job
-    if SCHEDULE_FREQUENCY == "WEEKLY":
-        weekday_method = getattr(schedule.every(), SCHEDULE_WEEKDAY.lower())
-        weekday_method.at(SCHEDULE_TIME).do(job)  # type: ignore
-        logger.info(f"Scheduled job to run every {SCHEDULE_WEEKDAY} at {SCHEDULE_TIME}")
+    if settings.schedule_frequency == "WEEKLY":
+        # Get the weekday method (e.g., schedule.every().wednesday)
+        weekday_method = getattr(schedule.every(), settings.schedule_weekday.lower())
+        # Schedule the job at the specified time
+        weekday_method.at(f"{schedule_hour:02d}:{schedule_minute:02d}").do(job)  # type: ignore
+        logger.info(
+            f"Scheduled job to run every {settings.schedule_weekday} at {settings.schedule_time} {settings.timezone}"
+        )
     else:  # DAILY
-        schedule.every().day.at(SCHEDULE_TIME).do(job)  # type: ignore
-        logger.info(f"Scheduled job to run daily at {SCHEDULE_TIME}")
+        schedule.every().day.at(f"{schedule_hour:02d}:{schedule_minute:02d}").do(job)  # type: ignore
+        logger.info(
+            f"Scheduled job to run daily at {settings.schedule_time} {settings.timezone}"
+        )
 
     # Run the scheduler
     while True:
@@ -35,4 +45,9 @@ def run_scheduler() -> None:
 
 
 if __name__ == "__main__":
-    run_scheduler()
+    import sys
+
+    if len(sys.argv) > 1 and sys.argv[1] == "--test":
+        test_scheduler()
+    else:
+        run_scheduler()

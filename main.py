@@ -1,5 +1,4 @@
 from playwright.sync_api import sync_playwright, Page
-from src._utils.env import load_credentials
 import requests
 import re
 from src._utils.utils import get_customer_id
@@ -10,12 +9,9 @@ from src._utils.date_utils import (
 )
 from src._utils.logger import setup_logger
 from src._utils.field_utils import find_available_fields, FieldInfo, TimeSlotDetail
-import src._utils.config as config
+from src._utils.env import settings
 
 logger = setup_logger()
-
-
-credentials = load_credentials()
 
 
 def main():
@@ -24,7 +20,7 @@ def main():
     Handles login, field selection, form filling, and checkout.
     """
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=config.HEADLESS)
+        browser = p.chromium.launch(headless=settings.headless)
         context = browser.new_context()
         page = context.new_page()
 
@@ -56,13 +52,13 @@ def login(page: Page):
     email_input = page.locator(
         "#main-content-body > div.layout__container--default.an-main__wrapper > div.an-module-container.module-sign > div > div > div > div:nth-child(1) > div.input-group.input-group--m.input-group--ng.intput__clear--detault > input"
     )
-    email_input.fill(credentials.email)
+    email_input.fill(settings.sf_rec_email)
 
     # password
     password_input = page.locator(
         "#main-content-body > div.layout__container--default.an-main__wrapper > div.an-module-container.module-sign > div > div > div > div:nth-child(2) > div.input-group.input-group--m.input-group--ng.intput__clear--detault > input"
     )
-    password_input.fill(credentials.password)
+    password_input.fill(settings.sf_rec_password)
 
     # submit button
     signin_button = page.locator(".btn-super")
@@ -84,7 +80,7 @@ def reservation_form(page: Page, customer_id: int):
         customer_id (int): The customer's ID for the API request
     """
     page.goto(
-        f"https://anc.apm.activecommunities.com/sfrecpark/reservation/landing/quick?groupId={config.FACILITY_GROUP_ID}",
+        f"https://anc.apm.activecommunities.com/sfrecpark/reservation/landing/quick?groupId={settings.facility_group_id}",
     )
 
     request_date = calculate_request_date()
@@ -119,7 +115,7 @@ def reservation_form(page: Page, customer_id: int):
 
     # reservation name
     name_input = page.locator("div.event-input .input-group__field")
-    name_input.fill(config.RESERVATION_NAME)
+    name_input.fill(settings.reservation_name)
 
     # get availability
     response = get_availability_details(page, request_date, customer_id)
@@ -143,14 +139,14 @@ def reservation_form(page: Page, customer_id: int):
     # Find available fields
     available_field, selected_time = find_available_fields(
         fields=fields,
-        primary_time=config.DESIRED_TIME_MILITARY,
-        alternate_times=config.ALT_DESIRED_TIMES_MILITARY,
-        field_prefix=config.DESIRED_FIELD_STARTS_WITH,
+        primary_time=settings.desired_time_military,
+        alternate_times=settings.alt_desired_times_military,
+        field_prefix=settings.desired_field_starts_with,
     )
 
     if not available_field:
         logger.error(
-            f"No fields available at {config.DESIRED_TIME_MILITARY} or any alternate times: {', '.join(config.ALT_DESIRED_TIMES_MILITARY)}"
+            f"No fields available at {settings.desired_time_military} or any alternate times: {', '.join(settings.alt_desired_times_military)}"
         )
         exit()
 
@@ -164,7 +160,7 @@ def reservation_form(page: Page, customer_id: int):
     table_header = field_cell.locator("..").locator("..")
 
     quantity_stepper = table_header.locator("input")
-    quantity_stepper.fill(str(config.GROUP_QUANTITY))
+    quantity_stepper.fill(str(settings.group_quantity))
 
     field_cell.click()
 
@@ -199,7 +195,7 @@ def get_availability_details(page: Page, request_date: str, customer_id: int):
         response = requests.post(
             url="https://anc.apm.activecommunities.com/sfrecpark/rest/reservation/quickreservation/availability?locale=en-US",
             json={
-                "facility_group_id": config.FACILITY_GROUP_ID,
+                "facility_group_id": settings.facility_group_id,
                 "customer_id": customer_id,
                 "company_id": 0,
                 "reserve_date": request_date,
@@ -244,7 +240,7 @@ def details_and_policy_questions(page: Page):
         "#main-content-body > div > div.an-module-container > div > div > div.modal-wrap > div.modal.is-open.quick-need-to-answer > section > div.modal-body > div.enroll-question > div.an-survey > fieldset > div > div:nth-child(1) > fieldset > div > div.afx-col.question-answer-container.enroll-question-answer > div > div > div.dropdown__button.input__field"
     )
     activity_dropdown.click()
-    activity_option = page.locator(f"li[title='{config.SPORT}']")
+    activity_option = page.locator(f"li[title='{settings.sport}']")
     activity_option.scroll_into_view_if_needed()
     activity_option.click()
 
@@ -310,7 +306,7 @@ def checkout_form(page: Page):
     # cvv
     cvv = iframe.locator(".form-control")
     cvv.wait_for(state="visible")
-    cvv.fill(config.CVV)
+    cvv.fill(settings.cvv)
 
     # submit button
     pay_button = page.locator(".pay__button")
